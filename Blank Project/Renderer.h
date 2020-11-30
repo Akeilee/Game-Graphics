@@ -58,6 +58,7 @@ protected:
 	HeightMap* heightMap;
 	Mesh* quad;
 	Light* light;
+	Light* light2;
 	Camera* camera;
 	GLuint cubeMap;
 	GLuint waterTex;
