@@ -88,6 +88,8 @@ protected:
 	GLuint earthTex;
 	GLuint earthBump;
 
+
+
 	float waterRotate;
 	float waterCycle;
 
@@ -96,7 +98,7 @@ protected:
 	void WholeSceneFBO();
 	void forReflect();
 
-
+	
 
 	//tut 15
 	void FillBuffers(); //G- Buffer Fill Render Pass
