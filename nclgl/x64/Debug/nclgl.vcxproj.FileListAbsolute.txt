@@ -1,0 +1,2 @@
+C:\Users\Akeina\Desktop\CSC8502\x64\Debug\nclgl.pdb
+C:\Users\Akeina\Desktop\CSC8502\nclgl\x64\Debug\nclgl.pdb

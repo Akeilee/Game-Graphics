@@ -68,7 +68,7 @@ fragColour.rgb +=( lightColour.rgb * attenuation * specFactor )*0.33;
 //fragColour.rgb += shadow *0.1f; 
 
 
-fragColour.rgb *= shadow; // shadowing factor
+fragColour.rgb *= shadow*2; // shadowing factor
 fragColour.rgb += surface * 0.1f; // ambient
 fragColour.a = diffuse.a;
 

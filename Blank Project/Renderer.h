@@ -16,9 +16,12 @@ public:
 	void RenderScene() override;
 	
 	void UpdateScene(float dt) override;
+	void Gui();
+	void splitscreen();
+	bool usingdepth;
 
 protected:
-
+	
 	void BuildNodeLists(SceneNode* from);
 	void SortNodeLists();
 	void ClearNodeLists();
@@ -32,6 +35,7 @@ protected:
 	void DrawWater();
 	void DrawSkybox();
 	void DrawShadowScene();
+
 	void DrawFullScene();
 
 	void BuildingShadowFBO();
@@ -41,6 +45,8 @@ protected:
 	void MakeOrbs();
 
 	void OrbShadow();
+
+	
 
 	//tut 7
 	SceneNode* root;
@@ -58,6 +64,7 @@ protected:
 	GLuint shadowTex;
 	GLuint shadowFBO;
 	void DrawBuilding();
+	void DrawBuilding2();
 	void DrawMainScene();
 	void DrawFloorShadow();
 
@@ -83,6 +90,7 @@ protected:
 	Light* light2;
 	Light* orbLight;
 	Camera* camera;
+	Camera* camera2;
 	GLuint cubeMap;
 	GLuint waterTex;
 	GLuint earthTex;
