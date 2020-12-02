@@ -51,6 +51,7 @@ if(abs( shadowNDC.x) < 1.0f && abs( shadowNDC.y) < 1.0f && abs( shadowNDC.z) < 1
 	}		
 }
 
+
 vec3 surface = ( diffuse.rgb * lightColour.rgb); // Base colour
 fragColour.rgb = surface * attenuation * lambert; // diffuse
 fragColour.rgb +=( lightColour.rgb * attenuation * specFactor )*0.33;

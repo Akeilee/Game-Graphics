@@ -12,4 +12,5 @@ void main(void) {
        // fragColour = vec4(1.0, 0.0, 0.0, 1.0);
    // else
 		fragColour = IN.colour;
+		fragColour.a = 0.5;
 }

@@ -7,13 +7,18 @@ class Shader;
 class HeightMap;
 class SceneNode;
 class Mesh;
+class MeshAnimation;
+class MeshMaterial;
 
 class Renderer : public OGLRenderer {
 public:
 	Renderer(Window& parent);
 	void PointLightFBO(); /////////
 	~Renderer(void);
+	void DrawRobot();
 	void RenderScene() override;
+
+	void robotintoFBO();
 	
 	void UpdateScene(float dt) override;
 	void Gui();
@@ -68,15 +73,19 @@ protected:
 	void DrawMainScene();
 	void DrawFloorShadow();
 
+	void robotShadow();
+
 	vector<Mesh*> sceneMeshes;
 	vector <Matrix4 > sceneTransforms;
 	GLuint sphereTex;
 	GLuint sphereFBO;
 	Mesh* sphere;
+	Mesh* cylinder;
 	Matrix4 buildingTransform;
 	float sceneTime;
 
 	Shader* orbShader;
+	Shader* tut1Shader;
 	Shader* basicShader;
 	Shader* sceneShader;
 	Shader* sceneShader2; ////////
@@ -95,6 +104,7 @@ protected:
 	GLuint waterTex;
 	GLuint earthTex;
 	GLuint earthBump;
+	GLuint robotshadow;
 
 
 
@@ -127,4 +137,15 @@ protected:
 	GLuint lightSpecularTex; // Store specular lighting
 
 	Light* pointLights; // Array of lighting data
+
+
+	//tut 9
+	Mesh* animMesh;
+	MeshAnimation* anim;
+	MeshMaterial* material;
+	vector <GLuint > matTextures;
+	Shader* tut9shader;
+
+	int currentFrame;
+	float frameTime;
 };

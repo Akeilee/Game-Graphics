@@ -3,23 +3,32 @@
 #include "../nclgl/Heightmap.h"
 #include "../nclgl/Shader.h"
 #include "../nclgl/Camera.h"
+#include "../nclgl/MeshAnimation.h"
+#include "../nclgl/MeshMaterial.h"
 #include <algorithm>
 #include <cmath>
 
 #define SHADOWSIZE 20480
 const int LIGHT_NUM = 80; //number of lights in scene
+const int BUILDING_NUM = 20; //number of lights in scene
 float changelightpos = 0;
 float changeShadowPos = 0;
+float changeRobotPos = 0;
+bool rotatepos = false;
+bool flipOnce = false;
+int count = 0;
 
 Renderer::Renderer(Window& parent) : OGLRenderer(parent) {
 	usingdepth = false;
 	sceneShader = new Shader("shadowSceneVert2.glsl", "shadowSceneFrag2.glsl");
 	shadowShader = new Shader("shadowVert.glsl", "shadowFrag.glsl");
 	basicShader = new Shader("TexturedVertex2.glsl", "TexturedFragment2.glsl");
+	tut1Shader = new Shader("TexturedVertex2.glsl", "TexturedFragmentrobot.glsl");
 
 	quad = Mesh::GenerateQuad();
 	cube = Mesh::LoadFromMeshFile("OffsetCubeY.msh");
 	sphere = Mesh::LoadFromMeshFile("Sphere.msh");
+	cylinder = Mesh::LoadFromMeshFile("Cylinder.msh");
 
 	sceneMeshes.emplace_back(Mesh::GenerateQuad());
 	sceneMeshes.emplace_back(Mesh::LoadFromMeshFile("Sphere.msh"));
@@ -29,11 +38,11 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent) {
 	buildingTex = SOIL_load_OGL_texture(TEXTUREDIR "bb.JPG", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
 	buildingBump = SOIL_load_OGL_texture(TEXTUREDIR "bb1.PNG", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
 
-	heightMap = new HeightMap(TEXTUREDIR "smooth3.JPG");
+	heightMap = new HeightMap(TEXTUREDIR "smooth5.JPG");
 	waterTex = SOIL_load_OGL_texture(TEXTUREDIR "water.TGA", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
 	earthTex = SOIL_load_OGL_texture(TEXTUREDIR "tarmac.JPG", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
 	earthBump = SOIL_load_OGL_texture(TEXTUREDIR "tarmacBump.PNG", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-
+	robotshadow = SOIL_load_OGL_texture(TEXTUREDIR "robotshadow.PNG", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
 
 	cubeMap = SOIL_load_OGL_cubemap(
 		TEXTUREDIR "px.png", TEXTUREDIR "nx.png",
@@ -69,7 +78,7 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent) {
 	WholeSceneFBO();
 
 	root = new SceneNode();
-	for (int i = 0; i < 20; ++i) {
+	for (int i = 0; i < BUILDING_NUM; ++i) {
 		SceneNode* s = new SceneNode();
 		float bounds = 0;
 		s->SetColour(Vector4(1, 1, 1, 1));
@@ -85,17 +94,16 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent) {
 	}
 
 	Vector3 heightmapSize = heightMap->GetHeightmapSize();
-
 	camera = new Camera(0.0f, 220.0f, heightmapSize * Vector3(-0.5f, 5.0f, -0.5f));
 	light = new Light(heightmapSize * Vector3(-0.5f, 5.5f, -0.5f), Vector4(1, 1, 1, 1), heightmapSize.x * 100.0f);
-	light2 = new Light(heightmapSize * Vector3(0.5f, 5.5f, 0.5f), Vector4(1, 0.55, 0, 1), heightmapSize.x * 500.0f);
+	light2 = new Light(heightmapSize * Vector3(0.75f, 3.5f, 0.75f), Vector4(1, 0.55, 0, 1), heightmapSize.x * 500.0f);  
 	//orbLight = new Light(heightmapSize * Vector3(-0.5f, 5.5f, -0.5f), Vector4(1, 1, 1, 1), heightmapSize.x * 100.0f);
 
 
 	//camera = new Camera(-30.0f, 315.0f, heightmapSize * Vector3(-8.0f, 10.0f, 8.0f));
 	orbLight = new Light(Vector3(-200.0f, 1500.0f, -20.0f), Vector4(1, 1, 1, 1), 1000 * 250.0f);
 
-	camera->SetPosition(orbLight->GetPosition());
+	//camera->SetPosition(orbLight->GetPosition());
 	//light = new Light(heightmapSize * Vector3(0.5, 2.10f, 0.5), Vector4(1, 1, 1, 1), heightmapSize.x * 10.0f);
 
 
@@ -105,19 +113,49 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent) {
 
 	for (int i = 0; i < LIGHT_NUM; ++i) {
 		Light& l = pointLights[i];
-		l.SetPosition(Vector3(rand() % (int)heightmapSize.x, rand() % 200 + 100, rand() % (int)heightmapSize.z));  //rand x and z
-		l.SetColour(Vector4(1.5f + (float)(rand() / (float)RAND_MAX), 1.5f + (float)(rand() / (float)RAND_MAX), 1.5f + (float)(rand() / (float)RAND_MAX), 1));
-		l.SetRadius((rand() % 200 + 800)); //min size is 50
+		float randx = rand() % (int)heightmapSize.x;
+		float randy = rand() % 200 + 100;
+		float randz = rand() % (int)heightmapSize.z;
+		l.SetPosition(Vector3(randx, randy, randz));  //rand x and z
+
+		float x = 1 + (float)(rand() / (float)RAND_MAX);
+		float y = 1 + (float)(rand() / (float)RAND_MAX);
+		float z = 1 + (float)(rand() / (float)RAND_MAX);
+		l.SetColour(Vector4(x,y,z , 1));
+		l.SetRadius((rand() % 300 + 600)); //min size is 50
 
 	}
 	sceneShader2 = new Shader("BumpVertex.glsl", "bufferFragment.glsl");
 	pointlightShader = new Shader("pointLightVert.glsl", "pointLightFrag.glsl");
 	combineShader = new Shader("combineVert.glsl", "combineFrag.glsl");
 
+
 	PointLightFBO();
 
 
 	///////////////
+	tut9shader = new Shader("SkinningVertex.glsl", "TexturedFragmentMain.glsl");
+	animMesh = Mesh::LoadFromMeshFile("Robot1.msh");
+	anim = new MeshAnimation("Robot1.anm");
+	material = new MeshMaterial("Robot1.mat");
+
+
+	for (int i = 0; i < animMesh->GetSubMeshCount(); ++i) {
+		const MeshMaterialEntry* matEntry = material->GetMaterialForLayer(i);
+
+		const string* filename = nullptr;
+		matEntry->GetEntry("Diffuse", &filename);
+		string path = TEXTUREDIR + *filename;
+		GLuint texID = SOIL_load_OGL_texture(path.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
+		matTextures.emplace_back(texID);
+	}
+	currentFrame = 0;
+	frameTime = 0.0f;
+
+	/// <summary>
+	/// /
+	/// </summary>
+	/// <param name="parent"></param>
 
 	projMatrix = Matrix4::Perspective(1.0f, 15000.0f, (float)width / (float)height, 45.0f);
 
@@ -248,6 +286,19 @@ void Renderer::UpdateScene(float dt) {
 	changelightpos = 1000.0f * sin(sceneTime * 2) + 500;
 	changeShadowPos = 40.0f * sin(sceneTime * 2);
 
+	float walkSpeed = sceneTime / 5;
+	changeRobotPos = (float)0.5*(1+sin(walkSpeed));
+
+	//float randx = 1.5 * (sin(sceneTime*1.55) + 2.5);
+	//float randy = 1.5 * (sin(sceneTime*1.65) + 2);
+	//float randz = 1.5 * (sin(sceneTime*1.75) + 1.5);
+
+	//light2->SetColour(Vector4(randx, randy, randz, 1));
+
+	
+	/// </summary>
+	/// <param name="dt"></param>
+	frameTime -= dt;
 	for (int i = 1; i < 4; ++i) {
 
 		Vector3 t = Vector3(2500, 200.0f * sin(sceneTime * 2) + 500, 500);
@@ -255,11 +306,90 @@ void Renderer::UpdateScene(float dt) {
 		sceneTransforms[i] = Matrix4::Translation(t) * Matrix4::Rotation(sceneTime * 10, Vector3(1, 0, 0)) * Matrix4::Scale(Vector3(100, 100, 100));
 		//sceneTransforms[i] = Matrix4::Translation(t) * Matrix4::Rotation(sceneTime * 10 * i, Vector3(1, 0, 0));
 	}
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="dt"></param>
+
+	while (frameTime < 0.0f) {
+		currentFrame = (currentFrame + 1) % anim->GetFrameCount();
+		frameTime += 1.0f / anim->GetFrameRate();
+	}
 
 
 	frameFrustum.FromMatrix(projMatrix * viewMatrix);
 	root->Update(dt);
 }
+
+
+void Renderer::DrawRobot() {
+
+	BindShader(tut1Shader);
+	SetShaderLight(*light);
+	viewMatrix = camera->BuildViewMatrix();
+	projMatrix = Matrix4::Perspective(1.0f, 15000.0f, (float)width / (float)height, 45.0f);
+	glUniform1i(glGetUniformLocation(tut9shader->GetProgram(), "diffuseTex"), 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, earthTex);
+
+	modelMatrix = Matrix4::Translation(heightMap->GetHeightmapSize() * Vector3(0.55, 1.001, changeRobotPos)) * Matrix4::Scale(Vector3(100, 0, 120));
+	UpdateShaderMatrices();
+	cylinder->Draw();
+
+
+
+	modelMatrix.ToZero();
+	//glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	glEnable(GL_CULL_FACE);
+	viewMatrix = camera->BuildViewMatrix();
+	Vector3 heightMapSize = heightMap->GetHeightmapSize();
+	
+	if (count == 1) {
+		modelMatrix = Matrix4::Translation(heightMapSize * Vector3(0.55, 1.01, changeRobotPos)) * Matrix4::Scale(Vector3(100, 100, 100)) * Matrix4::Rotation(0, Vector3(0, 1, 0));
+	}
+	if (count == 0) {
+		modelMatrix = Matrix4::Translation(heightMapSize * Vector3(0.55, 1.01, changeRobotPos)) * Matrix4::Scale(Vector3(100, 100, 100)) * Matrix4::Rotation(180, Vector3(0, 1, 0));
+	}
+	
+	if (changeRobotPos >= 0.99) {
+		count=0;
+	}
+	if (changeRobotPos <=0.01) {
+		count = 1;
+	}
+
+
+	BindShader(tut9shader);
+	glUniform1i(glGetUniformLocation(tut9shader->GetProgram(), "diffuseTex"), 0);
+	UpdateShaderMatrices();
+
+	vector<Matrix4> frameMatrices;
+
+	const Matrix4* invBindPose = animMesh->GetInverseBindPose();
+	const Matrix4* frameData = anim->GetJointData(currentFrame);
+
+	for (unsigned int i = 0; i < animMesh->GetJointCount(); ++i) {
+		frameMatrices.emplace_back(frameData[i] * invBindPose[i]);
+	}
+
+	int j = glGetUniformLocation(tut9shader->GetProgram(), "joints");
+	glUniformMatrix4fv(j, frameMatrices.size(), false, (float*)frameMatrices.data());
+
+
+	for (int i = 0; i < animMesh->GetSubMeshCount(); ++i) {
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, matTextures[i]);
+		animMesh->DrawSubMesh(i);
+	}
+	glDisable(GL_CULL_FACE);
+
+
+
+
+	
+
+}
+
 
 void Renderer::RenderScene() {
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
@@ -294,7 +424,10 @@ void Renderer::RenderScene() {
 	}
 	
 	DrawBuilding();  //drawing again might not need
-	//DrawHeightmap();
+	DrawHeightmap();
+	DrawRobot();
+	
+	
 	CombineBuffers();
 	
 }
@@ -308,6 +441,7 @@ void Renderer::FillBuffers() {  // 1
 
 
 	DrawBuilding();
+	DrawRobot();
 	DrawHeightmap();
 	DrawWater();
 
@@ -715,6 +849,7 @@ void Renderer::DrawFloorShadow() {
 	modelMatrix.ToIdentity();
 	Vector3 lightPos = light->GetPosition();
 	lightPos.y = changeShadowPos;
+	//lightPos.y = 50;
 
 	viewMatrix = Matrix4::BuildViewMatrix(lightPos, Vector3(0, 0, 0));
 	projMatrix = Matrix4::Perspective(1.0f, 15000.0f, (float)width / (float)height, 45.0f);
@@ -723,6 +858,8 @@ void Renderer::DrawFloorShadow() {
 
 	DrawNodes();
 	ClearNodeLists();
+
+	//DrawRobot();///////////////
 
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	glViewport(0, 0, width, height);
