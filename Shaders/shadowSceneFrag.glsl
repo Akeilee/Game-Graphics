@@ -7,9 +7,10 @@ uniform vec4 lightColour;
 uniform vec3 lightPos;
 uniform vec3 cameraPos;
 uniform float lightRadius;
+uniform float alpha;
 
 in Vertex {
-vec3 colour;
+vec4 colour;
 vec2 texCoord;
 vec3 normal;
 vec3 tangent;
@@ -70,8 +71,9 @@ fragColour.rgb +=( lightColour.rgb * attenuation * specFactor )*0.33;
 
 fragColour.rgb *= shadow*2; // shadowing factor
 fragColour.rgb += surface * 0.1f; // ambient
-fragColour.a = diffuse.a;
 
+diffuse.a = alpha;
+fragColour.a = diffuse.a;
 
 //fragColour.rgb = IN.normal;
 //fragColour.rgb = IN.tangent;

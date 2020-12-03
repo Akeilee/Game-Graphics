@@ -82,7 +82,6 @@ protected:
 	int		height;			//Render area height (not quite the same as window height)
 	bool	init;			//Did the renderer initialise properly?
 
-
 	//tut 3
 	void SetTextureRepeating(GLuint target, bool state);
 

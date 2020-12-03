@@ -28,6 +28,7 @@ vec4 shadowProj; //a new value !
 
 void main(void) {
 //OUT.colour = nodeColour; //////
+OUT.colour = colour;
 OUT.texCoord = texCoord;
 mat3 normalMatrix = transpose ( inverse (mat3( modelMatrix )));
 vec3 wNormal = normalize (normalMatrix * normalize ( normal ) );

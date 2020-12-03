@@ -18,25 +18,16 @@ float changeSpherePos = 0;
 bool rotatepos = false;
 bool flipOnce = false;
 int count = 0;
-const int POST_PASSES = 20;
 SceneNode* sphMesh = new SceneNode();
 SceneNode* waterNode = new SceneNode();
 
 
 Renderer::Renderer(Window& parent) : OGLRenderer(parent) {
 	usingdepth = false; //////////////
-	partylight = false;
-
-
-	helpshader = new Shader("TexturedVertex2.glsl", "TexturedFragmentMain.glsl");
-	processShader = new Shader("TexturedVertex2.glsl", "ProcessFrag.glsl");
-
 	sceneShader = new Shader("shadowSceneVert2.glsl", "shadowSceneFrag2.glsl");
 	shadowShader = new Shader("shadowVert.glsl", "shadowFrag.glsl");
 	basicShader = new Shader("TexturedVertex2.glsl", "TexturedFragment2.glsl");
 	tut1Shader = new Shader("TexturedVertex2.glsl", "TexturedFragmentrobot.glsl");
-
-	blendShader = new Shader("TexturedVertex2.glsl", "TexturedFragment2.glsl");
 
 	quad = Mesh::GenerateQuad();
 	cube = Mesh::LoadFromMeshFile("OffsetCubeY.msh");
@@ -85,7 +76,7 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent) {
 		!buildingShader->LoadSuccess() || !orbShader->LoadSuccess() || !shadowShader->LoadSuccess()) {
 		return;
 	}
-	Tut10FBO();
+
 	BuildingShadowFBO();
 	SphereShadowFBO();
 	WholeSceneFBO();
@@ -115,11 +106,9 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent) {
 	root->AddChild(sphMesh);
 
 
-	//camera = new Camera(0.0f, 220.0f, heightmapSize * Vector3(-0.5f, 5.0f, -0.5f));
-	
-	camera = new Camera(0.0f, 55.0f, Vector3(3800, 450, 3500));
+	camera = new Camera(0.0f, 220.0f, heightmapSize * Vector3(-0.5f, 5.0f, -0.5f));
 	light = new Light(heightmapSize * Vector3(-0.5f, 5.5f, -0.5f), Vector4(1, 1, 1, 1), heightmapSize.x * 100.0f);
-	light2 = new Light(heightmapSize * Vector3(0.95f, 3.5f, 0.95f), Vector4(1, 0.55, 0, 1), heightmapSize.x * 500.0f);
+	light2 = new Light(heightmapSize * Vector3(0.75f, 3.5f, 0.75f), Vector4(1, 0.55, 0, 1), heightmapSize.x * 500.0f);
 	//orbLight = new Light(heightmapSize * Vector3(-0.5f, 5.5f, -0.5f), Vector4(1, 1, 1, 1), heightmapSize.x * 100.0f);
 
 
@@ -198,7 +187,6 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent) {
 	sceneTransforms[0] = Matrix4::Translation(t) * Matrix4::Rotation(90, Vector3(1, 0, 0)) * Matrix4::Scale(Vector3(1000, 1000, 1000));
 	//sceneTransforms[0] = Matrix4::Rotation(90, Vector3(1, 0, 0)) * Matrix4::Scale(Vector3(10, 10, 1));
 	sceneTime = 0.0f;
-
 	init = true;
 }
 
@@ -301,39 +289,24 @@ void Renderer::GenerateScreenTexture(GLuint& into, bool depth) {
 
 
 void Renderer::UpdateScene(float dt) {
-
-	
+	camera->UpdateCamera(dt);
 	//viewMatrix = camera->BuildViewMatrix();
 	waterRotate += dt * 2.0f; //2 degrees a second
 	waterCycle += dt * 0.25f; //10 units a second
 	sceneTime += dt;
 
-
-	camera->UpdateCamera(dt);
-
-
-
-
-
-	changelightpos = 1000.0f * sin(sceneTime * 4) + 500;
+	changelightpos = 1000.0f * sin(sceneTime * 2) + 500;
 	changeShadowPos = 40.0f * sin(sceneTime * 2);
 
 	float walkSpeed = sceneTime / 5;
 	changeRobotPos = (float)0.5 * (1 + sin(walkSpeed));
 
 	changeSpherePos = (float)500 * (1 + sin(sceneTime)) + 420;
+	//float randx = 1.5 * (sin(sceneTime*1.55) + 2.5);
+	//float randy = 1.5 * (sin(sceneTime*1.65) + 2);
+	//float randz = 1.5 * (sin(sceneTime*1.75) + 1.5);
 
-	if (partylight == true) {
-		float randx = 1.5 * (sin(sceneTime*1.55) + 2.5);
-	float randy = 1.5 * (sin(sceneTime*1.65) + 2);
-	float randz = 1.5 * (sin(sceneTime*1.75) + 1.5);
-
-	light2->SetColour(Vector4(randx, randy, randz, 1));
-	}
-	else if (partylight == false) {
-		light2->SetColour(Vector4(1, 0.55, 0, 1));
-	}
-
+	//light2->SetColour(Vector4(randx, randy, randz, 1));
 
 
 	/// </summary>
@@ -360,116 +333,6 @@ void Renderer::UpdateScene(float dt) {
 	frameFrustum.FromMatrix(projMatrix * viewMatrix);
 	root->Update(dt);
 }
-
-
-void Renderer::Tut10FBO() {
-	// Generate our scene depth texture ...
-	glGenTextures(1, &buffDepthTex);
-	glBindTexture(GL_TEXTURE_2D, buffDepthTex);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, width, height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
-
-	// And our colour texture ...
-	for (int i = 0; i < 2; ++i) {
-		glGenTextures(1, &buffColTex[i]);
-		glBindTexture(GL_TEXTURE_2D, buffColTex[i]);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-	}
-
-	glGenFramebuffers(1, &buffBlurFBO); // We’ll render the scene into this
-	glGenFramebuffers(1, &processFBO);// And do post processing in this
-
-	glBindFramebuffer(GL_FRAMEBUFFER, buffBlurFBO);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, buffDepthTex, 0);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, buffDepthTex, 0);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, buffColTex[0], 0);
-
-	//We can check FBO attachment success using this command !
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE || !buffDepthTex || !buffColTex[0]) {
-		return;
-	}
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
-
-void Renderer::DrawPostProcess() {
-	glBindFramebuffer(GL_FRAMEBUFFER, processFBO);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, buffColTex[1], 0);
-	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-
-	BindShader(processShader);
-	modelMatrix.ToIdentity();
-	viewMatrix.ToIdentity();
-	projMatrix.ToIdentity();
-	UpdateShaderMatrices();
-
-	glDisable(GL_DEPTH_TEST);
-
-	glActiveTexture(GL_TEXTURE0);
-	glUniform1i(glGetUniformLocation(processShader->GetProgram(), "sceneTex"), 0);
-
-
-	for (int i = 0; i < POST_PASSES; ++i) {
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, buffColTex[1], 0);
-		glUniform1i(glGetUniformLocation(processShader->GetProgram(), "isVertical"), 0);
-
-		glBindTexture(GL_TEXTURE_2D, buffColTex[0]);
-		quad->Draw();
-
-		// Now to swap the colour buffers , and do the second blur pass
-		glUniform1i(glGetUniformLocation(processShader->GetProgram(), "isVertical"), 1);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, buffColTex[0], 0);
-		glBindTexture(GL_TEXTURE_2D, buffColTex[1]);
-		quad->Draw();
-	}
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glEnable(GL_DEPTH_TEST);
-}
-
-
-void Renderer::PrintBlurScreen() {
-	//glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-
-	glViewport(0, 0, width, height);
-
-	modelMatrix.ToIdentity();
-	viewMatrix.ToIdentity();
-	projMatrix.ToIdentity();
-	textureMatrix.ToIdentity();
-
-	//DrawSkybox();
-	BindShader(helpshader);
-
-	glUniform1i(glGetUniformLocation(helpshader->GetProgram(), "diffuseTex"), 0);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, buffColTex[0]);
-
-	UpdateShaderMatrices();
-	quad->Draw();
-
-
-
-
-	glViewport(width / 2, 0, 0, 0);
-	BindShader(helpshader);
-	glUniform1i(glGetUniformLocation(helpshader->GetProgram(), "diffuseTex"), 0);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, buffColTex[0]);
-	UpdateShaderMatrices();
-	quad->Draw();
-
-
-}
-
-
 
 
 void Renderer::DrawRobot() {
@@ -550,7 +413,7 @@ void Renderer::RenderScene() {
 	FillBuffers(); //bufferfbo water, height, building
 
 	////DrawBuilding();  //drawing again might not need
-	DrawHeightmap();
+	////DrawHeightmap();
 
 
 	//DrawFullScene();
@@ -568,28 +431,18 @@ void Renderer::RenderScene() {
 	CombineBuffers();
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	glBindFramebuffer(GL_FRAMEBUFFER, buffBlurFBO);
-	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-	CombineBuffers();
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	DrawPostProcess();
-
 	//splitscreen();
 	if (usingdepth == true) {
-	PrintBlurScreen();
-	
-	//Gui();
+		Gui();
 	}
 
-//DrawBuilding();  //drawing again might not need
-//DrawHeightmap();
-DrawRobot();
+	//DrawBuilding();  //drawing again might not need
+	//DrawHeightmap();
+	DrawRobot();
 
 
-CombineBuffers();
-DrawWater();
+	//CombineBuffers();
+	DrawWater();
 }
 
 
@@ -598,15 +451,13 @@ void Renderer::FillBuffers() {  // 1
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	glViewport(0, 0, width, height);
-	DrawRobot();
-	DrawHeightmap();
-	DrawWater();
+
+
 	DrawBuilding();
-	
 	DrawRobot();
 	DrawHeightmap();
-	DrawWater();
-	
+	//DrawWater();
+
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 }
@@ -876,10 +727,10 @@ void Renderer::Gui() {
 
 	UpdateShaderMatrices();
 	quad->Draw();
-
-
-
 	glViewport(width / 2, 0, width / 2, height);
+
+
+
 
 	//Vector3 hSize = heightMap->GetHeightmapSize();
 	//glViewport(0, 0, width / 2, height);
@@ -1123,8 +974,6 @@ void Renderer::DrawSkybox() {
 }
 
 void Renderer::DrawHeightmap() {
-
-
 	BindShader(buildingShader);  //changed from build shader
 	SetShaderLight(*light);
 
@@ -1149,8 +998,6 @@ void Renderer::DrawHeightmap() {
 	UpdateShaderMatrices();
 
 	heightMap->Draw();
-
-
 }
 
 //void Renderer::HeightMapShadow() {
@@ -1176,7 +1023,7 @@ void Renderer::DrawWater() {
 	glUniform1i(glGetUniformLocation(reflectShader->GetProgram(), "cubeTex"), 2);
 
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, waterTex);
+	glBindTexture(GL_TEXTURE_2D, wholeSceneTex);
 
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMap);   ///reflt whole fbo
@@ -1190,12 +1037,16 @@ void Renderer::DrawWater() {
 		Matrix4::Rotation(90, Vector3(1, 0, 0));
 
 	//making water move
-	textureMatrix =
-		Matrix4::Translation(Vector3(waterCycle, 0.0f, waterCycle)) *
-		Matrix4::Scale(Vector3(10, 10, 10));
-	Matrix4::Rotation(waterRotate, Vector3(0, 0, 1));
+	//textureMatrix =
+		//Matrix4::Translation(Vector3(waterCycle, 0.0f, waterCycle)) *
+		//Matrix4::Scale(Vector3(10, 10, 10));
+		//Matrix4::Rotation(waterRotate, Vector3(0, 0, 1));
+	//textureMatrix.BuildViewMatrix(orbLight->GetPosition(), hSize * Vector3(-0.5f, 5.0f, -0.5f));
+	textureMatrix = (Matrix4::Translation(camera->GetPosition()) * Matrix4::Scale(Vector3(1, -1, 1)));
+	textureMatrix.
+		//textureMatrix = Matrix4::Rotation(camera->GetPitch() * -1, Vector3(0, 0, 1));
 
-	UpdateShaderMatrices();
+		UpdateShaderMatrices();
 	SetShaderLight(*light);
 	quad->Draw();
 }

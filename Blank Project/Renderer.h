@@ -24,6 +24,8 @@ public:
 	void Gui();
 	void splitscreen();
 	bool usingdepth;
+	bool partylight;
+	bool autoCamera;
 
 protected:
 	
@@ -85,6 +87,8 @@ protected:
 	float sceneTime;
 
 	Shader* orbShader;
+	Shader* blendShader;
+
 	Shader* tut1Shader;
 	Shader* basicShader;
 	Shader* sceneShader;
@@ -95,6 +99,7 @@ protected:
 	Shader* skyboxShader;
 	HeightMap* heightMap;
 	Mesh* quad;
+	Mesh* waterQuad;
 	Light* light;
 	Light* light2;
 	Light* orbLight;
@@ -148,4 +153,18 @@ protected:
 
 	int currentFrame;
 	float frameTime;
+
+
+
+	//tut10
+	Shader* helpshader;
+	Shader* processShader;
+
+	void Tut10FBO();
+	void PrintBlurScreen();
+	void DrawPostProcess();
+	GLuint buffBlurFBO;
+	GLuint processFBO;
+	GLuint buffColTex[2];
+	GLuint buffDepthTex;
 };

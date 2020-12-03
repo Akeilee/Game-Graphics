@@ -18,13 +18,15 @@ int main()	{
 
 	while(w.UpdateWindow()  && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE)){
 
-		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_1)) {
-			renderer.usingdepth = !renderer.usingdepth;
-			renderer.Gui();
-		}
+
 		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_2)) {
-			renderer.usingdepth = false;
+			renderer.usingdepth = !renderer.usingdepth;
+			//renderer.Gui();   dont need
 		}
+		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_3)) {
+			renderer.partylight = !renderer.partylight;
+		}
+
 
 
 		renderer.UpdateScene(w.GetTimer()->GetTimeDeltaSeconds());

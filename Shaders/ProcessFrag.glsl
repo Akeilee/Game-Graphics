@@ -14,6 +14,9 @@ const float scaleFactors [7] = float [](0.006 , 0.061 , 0.242 , 0.383 , 0.242 , 
 
 void main(void) {
 
+if(texture(sceneTex,IN.texCoord).a <=0){
+discard;}
+
 fragColor = vec4 (0 ,0 ,0 ,1);
 vec2 delta = vec2 (0 ,0);
 
