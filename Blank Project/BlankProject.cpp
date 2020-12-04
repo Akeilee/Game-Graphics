@@ -2,7 +2,7 @@
 #include "Renderer.h"
 
 int main()	{
-	Window w("Make your own project!", 1280, 720, false);
+	Window w("JLee 8502 Project", 1280, 720, false);
 
 	if(!w.HasInitialised()) {
 		return -1;
@@ -21,7 +21,6 @@ int main()	{
 
 		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_2)) {
 			renderer.usingBlur = !renderer.usingBlur;
-			//renderer.Gui();   dont need
 		}
 		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_3)) {
 			renderer.partylight = !renderer.partylight;

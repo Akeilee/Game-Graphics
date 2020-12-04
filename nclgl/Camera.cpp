@@ -12,7 +12,7 @@ void Camera::UpdateCamera(float dt) {
 
 
 	//float speed = 30.0f * dt;
-	float speed = 5000.0f * dt;
+	float speed = 2500.0f * dt;
 
 	if (changeCam == true) {
 		pitch -= (Window::GetMouse()->GetRelativePosition().y);
