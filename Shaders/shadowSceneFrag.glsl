@@ -2,7 +2,7 @@
 
 uniform sampler2D diffuseTex;
 uniform sampler2D bumpTex;
-uniform sampler2D shadowTex; // NEW!
+uniform sampler2D shadowTex;
 uniform vec4 lightColour;
 uniform vec3 lightPos;
 uniform vec3 cameraPos;
@@ -16,7 +16,7 @@ vec3 normal;
 vec3 tangent;
 vec3 binormal;
 vec3 worldPos;
-vec4 shadowProj; // New!
+vec4 shadowProj; 
 } IN;
 
 out vec4 fragColour;

@@ -18,12 +18,6 @@ out vec4 fragColour;
 
 void main(void) {
 
-vec4 discardCol = texture(bumpTex,IN.texCoord);
-if(discardCol.a == 0){
-//discard;
-}
-
-
 vec4 diffuse = texture (diffuseTex , IN.texCoord );
 vec3 viewDir = normalize ( cameraPos - IN.worldPos );
 

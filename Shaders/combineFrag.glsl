@@ -12,7 +12,7 @@ out vec4 fragColour;
 
 
 void main(void) {
-vec4 discardCol0 = texture(diffuseTex,IN.texCoord);
+vec4 discardCol0 = texture(diffuseTex,IN.texCoord); //make sure background is not drawn
 if(discardCol0.a == 0){
 texture(diffuseTex,IN.texCoord);
 discard;

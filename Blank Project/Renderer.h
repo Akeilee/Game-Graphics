@@ -1,3 +1,8 @@
+//Name: Jane Lee
+//Date: 12/2020
+//8502 Graphics CW
+
+
 #pragma once
 #include "../nclgl/OGLRenderer.h"
 #include "../nclgl/SceneNode.h"
@@ -10,6 +15,7 @@ class Mesh;
 class MeshAnimation;
 class MeshMaterial;
 
+
 class Renderer : public OGLRenderer {
 public:
 
@@ -19,7 +25,7 @@ public:
 	void UpdateScene(float dt) override;
 
 	bool usingBlur;
-	bool partylight;
+	bool partyLight;
 	bool autoCamera;
 	bool gammaCorrect;
 	bool splitScreen;

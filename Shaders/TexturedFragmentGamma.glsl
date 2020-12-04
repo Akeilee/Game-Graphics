@@ -11,7 +11,7 @@ out vec4 fragColour;
 
 void main(void) {
 
-float gamma = 2.2;
+float gamma = 2.2; ///////gamma correction
 
 vec4 diffuse = texture(diffuseTex, IN.texCoord );
 fragColour.rgb = pow(diffuse.rgb, vec3(1.0/gamma));

@@ -1,23 +1,2 @@
-﻿  BlankProject.cpp
-  Renderer.cpp
-C:\Users\Akeina\Desktop\CSC8502\Blank Project\Renderer.cpp(108,78): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
-C:\Users\Akeina\Desktop\CSC8502\Blank Project\Renderer.cpp(108,62): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
-C:\Users\Akeina\Desktop\CSC8502\Blank Project\Renderer.cpp(120,82): warning C4305: 'argument': truncation from 'double' to 'const float'
-C:\Users\Akeina\Desktop\CSC8502\Blank Project\Renderer.cpp(126,93): warning C4305: 'argument': truncation from 'double' to 'float'
-C:\Users\Akeina\Desktop\CSC8502\Blank Project\Renderer.cpp(132,15): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-C:\Users\Akeina\Desktop\CSC8502\Blank Project\Renderer.cpp(133,15): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-C:\Users\Akeina\Desktop\CSC8502\Blank Project\Renderer.cpp(134,15): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-C:\Users\Akeina\Desktop\CSC8502\Blank Project\Renderer.cpp(141,29): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\Akeina\Desktop\CSC8502\Blank Project\Renderer.cpp(245,15): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Akeina\Desktop\CSC8502\Blank Project\Renderer.cpp(246,15): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Akeina\Desktop\CSC8502\Blank Project\Renderer.cpp(247,15): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Akeina\Desktop\CSC8502\Blank Project\Renderer.cpp(252,48): warning C4305: 'argument': truncation from 'double' to 'float'
-C:\Users\Akeina\Desktop\CSC8502\Blank Project\Renderer.cpp(348,56): warning C4244: 'argument': conversion from 'double' to 'const float', possible loss of data
-C:\Users\Akeina\Desktop\CSC8502\Blank Project\Renderer.cpp(461,143): warning C4244: 'argument': conversion from 'double' to 'const float', possible loss of data
-C:\Users\Akeina\Desktop\CSC8502\Blank Project\Renderer.cpp(461,87): warning C4244: 'argument': conversion from 'double' to 'const float', possible loss of data
-C:\Users\Akeina\Desktop\CSC8502\Blank Project\Renderer.cpp(564,104): warning C4305: 'argument': truncation from 'double' to 'const float'
-C:\Users\Akeina\Desktop\CSC8502\Blank Project\Renderer.cpp(576,88): warning C4305: 'argument': truncation from 'double' to 'const float'
-C:\Users\Akeina\Desktop\CSC8502\Blank Project\Renderer.cpp(579,88): warning C4305: 'argument': truncation from 'double' to 'const float'
-C:\Users\Akeina\Desktop\CSC8502\Blank Project\Renderer.cpp(603,81): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
-  Generating Code...
-  BlankProject.vcxproj -> C:\Users\Akeina\Desktop\CSC8502\x64\Debug\Blank Project.exe
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(491,5): warning MSB8028: The intermediate directory (x64\Debug\) contains files shared from another project (Blank Project.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+  BlankProject.vcxproj -> C:\Users\Akeina\Desktop\CSC8502\x64\Debug\JLee_8502_CW.exe

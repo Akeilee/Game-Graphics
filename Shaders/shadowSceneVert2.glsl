@@ -3,7 +3,7 @@
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projMatrix;
-uniform mat4 shadowMatrix; //a new uniform !
+uniform mat4 shadowMatrix; 
 
 uniform vec3 lightPos;
 
@@ -20,7 +20,7 @@ vec3 normal;
 vec3 tangent;
 vec3 binormal;
 vec3 worldPos;
-vec4 shadowProj; //a new value !
+vec4 shadowProj; 
 } OUT;
 
 
@@ -31,16 +31,16 @@ mat3 normalMatrix = transpose ( inverse (mat3( modelMatrix )));
 vec3 wNormal = normalize ( normalMatrix * normalize ( normal ));
 vec3 wTangent = normalize ( normalMatrix * normalize ( tangent.xyz ));
 
-OUT.normal = wNormal ;
-OUT.tangent = wTangent ;
+OUT.normal = wNormal;
+OUT.tangent = wTangent;
 OUT.binormal = cross(wNormal , wTangent ) * tangent.w;
 
 vec4 worldPos = ( modelMatrix * vec4(position ,1));
 OUT.worldPos = worldPos.xyz;
-gl_Position = ( projMatrix * viewMatrix ) * worldPos ;
+gl_Position = ( projMatrix * viewMatrix ) * worldPos;
 
 
 vec3 viewDir = normalize ( lightPos - worldPos.xyz );
-vec4 pushVal = vec4(OUT.normal , 0) * dot(viewDir , OUT.normal );
+vec4 pushVal = vec4(OUT.normal , 0) * dot(viewDir , OUT.normal );  //////no times 10 for shadow acne
 OUT.shadowProj = shadowMatrix * ( worldPos + pushVal );
 }

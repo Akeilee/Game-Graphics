@@ -1,3 +1,8 @@
+//Name: Jane Lee
+//Date: 12/2020
+//8502 Graphics CW
+
+
 #include "Renderer.h"
 #include "../nclgl/Light.h"
 #include "../nclgl/Heightmap.h"
@@ -22,7 +27,7 @@ int keepRobotCount = 0; //to rotate robot walking position
 
 Renderer::Renderer(Window& parent) : OGLRenderer(parent) {
 	usingBlur = false; 
-	partylight = false;
+	partyLight = false;
 	gammaCorrect = false;
 	splitScreen = false;
 	afterSplit = false;
@@ -74,7 +79,7 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent) {
 	pointlightShader = new Shader("pointLightVert.glsl", "pointLightFrag.glsl");
 	combineShader = new Shader("combineVert.glsl", "combineFrag.glsl"); //for scene with lights
 	robotShader = new Shader("SkinningVertex.glsl", "TexturedFragmentMain.glsl");
-	robotShadowShader = new Shader("TexturedVertex2.glsl", "TexturedFragmentrobot.glsl");
+	robotShadowShader = new Shader("TexturedVertex2.glsl", "TexturedFragmentRobot.glsl");
 	blurShader = new Shader("TexturedVertex2.glsl", "TexturedFragmentMain.glsl");
 	gammaShader = new Shader("TexturedVertex2.glsl", "TexturedFragmentGamma.glsl");
 	colourChangeShader = new Shader("TexturedVertex2.glsl", "ProcessFrag.glsl"); //changes colour of scene
@@ -112,7 +117,6 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent) {
 		s->SetBoundingRadius(bounds);
 
 		s->SetMesh(cube);
-		//s->SetTexture(buildingTex);
 		root->AddChild(s);
 	}
 	sphMesh->SetMesh(sphere);
@@ -241,14 +245,14 @@ void Renderer::UpdateScene(float dt) {
 	changeRobotPos = (float)0.5 * (1 + sin(walkSpeed));
 	changeSpherePos = (float)500 * (1 + sin(sceneTime)) + 420;
 
-	if (partylight == true) {
+	if (partyLight == true) {
 		float randx = 1.5 * (sin(sceneTime * 1.55) + 2.5);
 		float randy = 1.5 * (sin(sceneTime * 1.65) + 2);
 		float randz = 1.5 * (sin(sceneTime * 1.75) + 1.5);
 
 		ambientLight->SetColour(Vector4(randx, randy, randz, 1));
 	}
-	else if (partylight == false) {
+	else if (partyLight == false) {
 		ambientLight->SetColour(Vector4(1, 0.55, 0, 1));
 	}
 
@@ -360,6 +364,7 @@ void Renderer::DrawWater() {
 }
 
 void Renderer::DrawBuilding() {
+	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	BuildNodeLists(root);
 	SortNodeLists();
@@ -383,7 +388,7 @@ void Renderer::DrawBuilding() {
 
 	DrawNodes();
 	ClearNodeLists();
-
+	glDisable(GL_CULL_FACE);
 }
 
 void Renderer::DrawFloorShadow() {

@@ -1,3 +1,8 @@
+//Name: Jane Lee
+//Date: 12/2020
+//8502 Graphics CW
+
+
 #include "../NCLGL/window.h"
 #include "Renderer.h"
 
@@ -23,7 +28,7 @@ int main()	{
 			renderer.usingBlur = !renderer.usingBlur;
 		}
 		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_3)) {
-			renderer.partylight = !renderer.partylight;
+			renderer.partyLight = !renderer.partyLight;
 		}
 		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_4)) {
 			renderer.gammaCorrect = !renderer.gammaCorrect;

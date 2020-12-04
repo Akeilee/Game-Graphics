@@ -2,9 +2,9 @@
 
 uniform sampler2D diffuseTex;
 uniform sampler2D bumpTex;
-uniform sampler2D shadowTex; // NEW!
-uniform sampler2D thirdTex; 
-uniform sampler2D fourthTex; 
+uniform sampler2D shadowTex;
+uniform sampler2D thirdTex; ///////////// extra tex
+uniform sampler2D fourthTex; ///////////// extra tex
 uniform vec4 lightColour;
 uniform vec3 lightPos;
 uniform vec3 cameraPos;
@@ -17,7 +17,7 @@ vec3 normal;
 vec3 tangent;
 vec3 binormal;
 vec3 worldPos;
-vec4 shadowProj; // New!
+vec4 shadowProj; 
 } IN;
 
 out vec4 fragColour;
@@ -36,7 +36,7 @@ discard;}
 
 vec4 diffuse = texture(diffuseTex , IN.texCoord )+ texture(thirdTex, IN.texCoord) + texture(fourthTex,IN.texCoord);
 vec3 normal = texture (bumpTex , IN.texCoord ).rgb;
-normal = normalize (TBN * normal * 2.0 - 1.0);  ////////////////////////////////////
+normal = normalize (TBN * normal * 2.0 - 1.0);  
 
 float lambert = max(dot(incident , normal ), 0.0f);
 float distance = length ( lightPos - IN.worldPos );
@@ -46,7 +46,7 @@ float specFactor = clamp (dot(halfDir , normal ) ,0.0 ,1.0);
 specFactor = pow(specFactor , 60.0 );
 
 
-float shadow = 1.0; // New!
+float shadow = 1.0; 
 
 vec3 shadowNDC = IN.shadowProj.xyz/IN.shadowProj.w;
 if(abs( shadowNDC.x) < 1.0f && abs( shadowNDC.y) < 1.0f && abs( shadowNDC.z) < 1.0f) {
