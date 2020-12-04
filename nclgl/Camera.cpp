@@ -24,38 +24,37 @@ void Camera::UpdateCamera(float dt) {
 
 	if (changeCam == false) {
 
-		position += forward * (sin(addTime)*12);
-		position += right * (cos(addTime)*4);
-		position.y += (sin(addTime)*2);
+		position += forward * (0.5*(1+sin(addTime)*12));
+		position -= right * (1+sin(addTime)*4);
+		position.y += (1+sin(addTime)/2);
 
-		pitch += (0.25* sin(addTime)/4);
+		pitch += (0.25* (sin(addTime))/5);
+		yaw += (sin(addTime)/20);
+	}
+	if (changeCam == false && timer >= 15 && revert == false) {
+		position = Vector3(200, 700, 200);
+		yaw = 250;
+		/*position.x -= 100 * (sin(addTime) * 12);
+		position.z += 100 * (cos(addTime) * 4);
+		position.y += (sin(addTime) * 2);
 
+		pitch += (0.25 * sin(addTime) / 4);*/
+		timer = 0;
+		timer += dt;
+		revert = true;
+	}
 
-		if (timer >= 15 && revert == false) {
-			position = Vector3(1000, 700, 1000);
-			yaw = 180;
-			position.x -= 100 * (sin(addTime) * 12);
-			position.z += 100 * (cos(addTime) * 4);
-			position.y += (sin(addTime) * 2);
+	if (changeCam == false && timer >= 10 && revert == true) {
+		position = Vector3(3700, 600, 1600);
+		yaw = 75;
+		/*position.x += -120 * (sin(addTime) * 12);
+		position.z -= -80 * (cos(addTime) * 4);
+		position.y += (sin(addTime) * 2);*/
 
-			pitch += (0.25 * sin(addTime) / 4);
-			timer = 0;
-			timer += dt;
-			revert = true;
-		}
-
-		if (timer >= 10 && revert == true) {
-			position = Vector3(3500, 600, 1600);
-			yaw = 100;
-			position.x += -120 * (sin(addTime) * 12);
-			position.z -= -80 * (cos(addTime) * 4);
-			position.y += (sin(addTime) * 2);
-
-			//pitch += (0.25 * sin(addTime) / 4);
-			timer = 0;
-			timer += dt;
-			revert = false;
-		}
+		//pitch += (0.25 * sin(addTime) / 4);
+		timer = 0;
+		timer += dt;
+		revert = false;
 	}
 
 

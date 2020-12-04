@@ -24,11 +24,14 @@ SceneNode* waterNode = new SceneNode();
 
 
 Renderer::Renderer(Window& parent) : OGLRenderer(parent) {
-	usingdepth = false; //////////////
+	usingBlur = false; //////////////
 	partylight = false;
-
+	gammaCorrect = false;
+	splitScreen = false;
+	afterSplit = false;
 
 	helpshader = new Shader("TexturedVertex2.glsl", "TexturedFragmentMain.glsl");
+	gammaShader = new Shader("TexturedVertex2.glsl", "TexturedFragmentGamma.glsl");
 	processShader = new Shader("TexturedVertex2.glsl", "ProcessFrag.glsl");
 
 	sceneShader = new Shader("shadowSceneVert2.glsl", "shadowSceneFrag2.glsl");
@@ -437,7 +440,12 @@ void Renderer::DrawPostProcess() {
 void Renderer::PrintBlurScreen() {
 	//glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
-	glViewport(0, 0, width, height);
+	//glViewport(0, 0, width, height);
+
+	if (afterSplit == true) {
+		glViewport(0, 0, width / 2, height);
+	}
+
 
 	modelMatrix.ToIdentity();
 	viewMatrix.ToIdentity();
@@ -456,8 +464,15 @@ void Renderer::PrintBlurScreen() {
 
 
 
+	if (afterSplit == true) {
+		glViewport(width/2, 0, width / 2, height);
 
-	glViewport(width / 2, 0, 0, 0);
+		afterSplit = false;
+	}
+	else {
+		glViewport(width / 2, 0, 0, 0);
+	}
+
 	BindShader(helpshader);
 	glUniform1i(glGetUniformLocation(helpshader->GetProgram(), "diffuseTex"), 0);
 	glActiveTexture(GL_TEXTURE0);
@@ -467,6 +482,42 @@ void Renderer::PrintBlurScreen() {
 
 
 }
+
+
+void Renderer::PrintGammaCorrect() {
+	//glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+
+	//glViewport(0, 0, width, height);
+
+	modelMatrix.ToIdentity();
+	viewMatrix.ToIdentity();
+	projMatrix.ToIdentity();
+	textureMatrix.ToIdentity();
+
+	//DrawSkybox();
+	BindShader(gammaShader);
+
+	glUniform1i(glGetUniformLocation(gammaShader->GetProgram(), "diffuseTex"), 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, wholeSceneTex);
+
+	UpdateShaderMatrices();
+	quad->Draw();
+
+
+
+
+	glViewport(width / 2, 0, 0, 0);
+	BindShader(gammaShader);
+	glUniform1i(glGetUniformLocation(gammaShader->GetProgram(), "diffuseTex"), 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, wholeSceneTex);
+	UpdateShaderMatrices();
+	quad->Draw();
+
+
+}
+
 
 
 
@@ -576,11 +627,18 @@ void Renderer::RenderScene() {
 	DrawPostProcess();
 
 	//splitscreen();
-	if (usingdepth == true) {
-	PrintBlurScreen();
-	
-	//Gui();
+
+	if (splitScreen == true) {
+
+		Gui();
 	}
+	if (usingBlur == true) {
+		PrintBlurScreen();
+	}
+	if (gammaCorrect == true) {
+		PrintGammaCorrect();
+	}
+
 
 //DrawBuilding();  //drawing again might not need
 //DrawHeightmap();
@@ -946,12 +1004,13 @@ void Renderer::Gui() {
 	UpdateShaderMatrices();
 	quad->Draw();
 
+	afterSplit = true;
 
 	//glViewport(0, 0, width, height);
 
 }
 
-void Renderer::splitscreen() {
+void Renderer::DrawSplitScreen() {
 
 	//glViewport(0, 0, width / 2, height);
 	//BindShader(basicShader);

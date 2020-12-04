@@ -20,13 +20,18 @@ int main()	{
 
 
 		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_2)) {
-			renderer.usingdepth = !renderer.usingdepth;
+			renderer.usingBlur = !renderer.usingBlur;
 			//renderer.Gui();   dont need
 		}
 		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_3)) {
 			renderer.partylight = !renderer.partylight;
 		}
-
+		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_4)) {
+			renderer.gammaCorrect = !renderer.gammaCorrect;
+		}
+		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_5)) {
+			renderer.splitScreen = !renderer.splitScreen;
+		}
 
 
 		renderer.UpdateScene(w.GetTimer()->GetTimeDeltaSeconds());

@@ -22,10 +22,12 @@ public:
 	
 	void UpdateScene(float dt) override;
 	void Gui();
-	void splitscreen();
-	bool usingdepth;
+	void DrawSplitScreen();
+	bool usingBlur;
 	bool partylight;
 	bool autoCamera;
+	bool gammaCorrect;
+	bool splitScreen;
 
 protected:
 	
@@ -55,13 +57,14 @@ protected:
 
 	void OrbShadow();
 
-	
+	bool afterSplit;
 
 	//tut 7
 	SceneNode* root;
 	HeightMap* buildingMap;
 	Mesh* cube;
 	Shader* buildingShader;
+	Shader* gammaShader;
 	GLuint buildingTex;
 	GLuint buildingBump;
 
@@ -171,6 +174,7 @@ protected:
 
 	void Tut10FBO();
 	void PrintBlurScreen();
+	void PrintGammaCorrect();
 	void DrawPostProcess();
 	GLuint buffBlurFBO;
 	GLuint processFBO;
