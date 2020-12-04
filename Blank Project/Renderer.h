@@ -51,6 +51,8 @@ protected:
 
 	void MakeOrbs();
 
+	void DrawStencilObject();
+
 	void OrbShadow();
 
 	
@@ -62,6 +64,13 @@ protected:
 	Shader* buildingShader;
 	GLuint buildingTex;
 	GLuint buildingBump;
+
+
+	GLuint thirdTex;
+	GLuint fourthTex;
+	GLuint stencilTex;
+	GLuint vWaveTex;
+	GLuint blankTex;
 	Frustum frameFrustum;
 	vector<SceneNode*> transparentNodeList;
 	vector<SceneNode*> nodeList;

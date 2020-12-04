@@ -3,6 +3,8 @@
 uniform sampler2D diffuseTex;
 uniform sampler2D bumpTex;
 uniform sampler2D shadowTex; // NEW!
+uniform sampler2D thirdTex; 
+uniform sampler2D fourthTex; 
 uniform vec4 lightColour;
 uniform vec3 lightPos;
 uniform vec3 cameraPos;
@@ -28,7 +30,11 @@ vec3 halfDir = normalize ( incident + viewDir );
 
 mat3 TBN = mat3( normalize (IN.tangent ), normalize (IN.binormal ), normalize (IN.normal ));
 
-vec4 diffuse = texture (diffuseTex , IN.texCoord );
+if(texture(thirdTex,IN.texCoord).a ==0){
+discard;}
+
+
+vec4 diffuse = texture(diffuseTex , IN.texCoord )+ texture(thirdTex, IN.texCoord) + texture(fourthTex,IN.texCoord);
 vec3 normal = texture (bumpTex , IN.texCoord ).rgb;
 normal = normalize (TBN * normal * 2.0 - 1.0);  ////////////////////////////////////
 

@@ -1,3 +1,4 @@
 ﻿  Camera.cpp
-C:\Users\Akeina\Desktop\CSC8502\nclgl\Camera.cpp(33,34): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Akeina\Desktop\CSC8502\nclgl\Camera.cpp(31,34): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Akeina\Desktop\CSC8502\nclgl\Camera.cpp(41,38): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
   nclgl.vcxproj -> C:\Users\Akeina\Desktop\CSC8502\x64\Debug\nclgl.lib

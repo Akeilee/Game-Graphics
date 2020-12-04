@@ -35,4 +35,6 @@ protected:
 	float pitch;
 	Vector3 position; //Set to 0,0,0 by Vector3 constructor;
 
+	bool changeCam = false;
+	bool revert = false;
 };

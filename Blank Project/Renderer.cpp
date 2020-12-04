@@ -9,7 +9,7 @@
 #include <cmath>
 
 #define SHADOWSIZE 20480
-const int LIGHT_NUM = 80; //number of lights in scene
+const int LIGHT_NUM = 100; //number of lights in scene
 const int BUILDING_NUM = 20; //number of lights in scene
 float changelightpos = 0;
 float changeShadowPos = 0;
@@ -43,10 +43,10 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent) {
 	sphere = Mesh::LoadFromMeshFile("Sphere.msh");
 	cylinder = Mesh::LoadFromMeshFile("Cylinder.msh");
 
-	sceneMeshes.emplace_back(Mesh::GenerateQuad());
-	sceneMeshes.emplace_back(Mesh::LoadFromMeshFile("Sphere.msh"));
-	sceneMeshes.emplace_back(Mesh::LoadFromMeshFile("Cylinder.msh"));
-	sceneMeshes.emplace_back(Mesh::LoadFromMeshFile("Cone.msh"));
+	sceneMeshes.emplace_back(cylinder);
+	sceneMeshes.emplace_back(cylinder);
+	sceneMeshes.emplace_back(quad);
+
 
 	buildingTex = SOIL_load_OGL_texture(TEXTUREDIR "bb.JPG", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
 	buildingBump = SOIL_load_OGL_texture(TEXTUREDIR "bb1.PNG", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
@@ -56,6 +56,12 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent) {
 	earthTex = SOIL_load_OGL_texture(TEXTUREDIR "tarmac.JPG", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
 	earthBump = SOIL_load_OGL_texture(TEXTUREDIR "tarmacBump.PNG", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
 	robotshadow = SOIL_load_OGL_texture(TEXTUREDIR "robotshadow.PNG", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+
+	thirdTex = SOIL_load_OGL_texture(TEXTUREDIR "pink.JPG", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	vWaveTex = SOIL_load_OGL_texture(TEXTUREDIR "vwave.PNG", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	fourthTex = SOIL_load_OGL_texture(TEXTUREDIR "neon.JPG", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	stencilTex = SOIL_load_OGL_texture(TEXTUREDIR "vwaveStencil.PNG", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	blankTex = SOIL_load_OGL_texture(TEXTUREDIR "blank.PNG", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
 
 	cubeMap = SOIL_load_OGL_cubemap(
 		TEXTUREDIR "px.png", TEXTUREDIR "nx.png",
@@ -72,6 +78,9 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent) {
 	SetTextureRepeating(waterTex, true);
 	SetTextureRepeating(buildingTex, true);
 	SetTextureRepeating(buildingBump, true);
+	SetTextureRepeating(thirdTex, true);
+	SetTextureRepeating(fourthTex, true);
+	
 
 	reflectShader = new Shader("ReflectVertex.glsl", "ReflectFragment.glsl");  //water
 	skyboxShader = new Shader("SkyboxVertex.glsl", "SkyboxFragment.glsl");
@@ -136,9 +145,9 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent) {
 
 	for (int i = 0; i < LIGHT_NUM; ++i) {
 		Light& l = pointLights[i];
-		float randx = rand() % (int)heightmapSize.x;
+		float randx = rand() % ((int)heightmapSize.x+50);
 		float randy = rand() % 200 + 100;
-		float randz = rand() % (int)heightmapSize.z;
+		float randz = rand() % ((int)heightmapSize.z+50);
 		l.SetPosition(Vector3(randx, randy, randz));  //rand x and z
 
 		float x = 1 + (float)(rand() / (float)RAND_MAX);
@@ -188,15 +197,11 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent) {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
-	//glEnable(GL_POLYGON_OFFSET_FILL);
 
 	waterRotate = 0.0f;
 	waterCycle = 0.0f;
 
-	sceneTransforms.resize(4);
-	Vector3 t = Vector3(2500, 300, 500);
-	sceneTransforms[0] = Matrix4::Translation(t) * Matrix4::Rotation(90, Vector3(1, 0, 0)) * Matrix4::Scale(Vector3(1000, 1000, 1000));
-	//sceneTransforms[0] = Matrix4::Rotation(90, Vector3(1, 0, 0)) * Matrix4::Scale(Vector3(10, 10, 1));
+	sceneTransforms.resize(3);
 	sceneTime = 0.0f;
 
 	init = true;
@@ -339,13 +344,7 @@ void Renderer::UpdateScene(float dt) {
 	/// </summary>
 	/// <param name="dt"></param>
 	frameTime -= dt;
-	for (int i = 1; i < 4; ++i) {
 
-		Vector3 t = Vector3(2500, 200.0f * sin(sceneTime * 2) + 500, 500);
-		//Vector3 t = Vector3(-12 + (5 * i), 2.0f + sin(sceneTime * i), 0);
-		sceneTransforms[i] = Matrix4::Translation(t) * Matrix4::Rotation(sceneTime * 10, Vector3(1, 0, 0)) * Matrix4::Scale(Vector3(100, 100, 100));
-		//sceneTransforms[i] = Matrix4::Translation(t) * Matrix4::Rotation(sceneTime * 10 * i, Vector3(1, 0, 0));
-	}
 	/// <summary>
 	/// 
 	/// </summary>
@@ -544,7 +543,7 @@ void Renderer::DrawRobot() {
 void Renderer::RenderScene() {
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	//OrbShadow();
-	//MakeOrbs();
+	
 
 	DrawFloorShadow(); //shadofbo building shadow
 	FillBuffers(); //bufferfbo water, height, building
@@ -587,7 +586,6 @@ void Renderer::RenderScene() {
 //DrawHeightmap();
 DrawRobot();
 
-
 CombineBuffers();
 DrawWater();
 }
@@ -601,6 +599,7 @@ void Renderer::FillBuffers() {  // 1
 	DrawRobot();
 	DrawHeightmap();
 	DrawWater();
+	MakeOrbs();
 	DrawBuilding();
 	
 	DrawRobot();
@@ -802,33 +801,79 @@ void Renderer::forReflect() {
 
 
 void Renderer::MakeOrbs() {
-	BindShader(sceneShader);
-	SetShaderLight(*orbLight);
+	BindShader(orbShader);
+	SetShaderLight(*light);
 	viewMatrix = camera->BuildViewMatrix();
 	projMatrix = Matrix4::Perspective(1.0f, 15000.0f, (float)width / (float)height, 45.0f);
 
-	glUniform1i(glGetUniformLocation(sceneShader->GetProgram(), "diffuseTex"), 0);
-	glUniform1i(glGetUniformLocation(sceneShader->GetProgram(), "bumpTex"), 1);
-	glUniform1i(glGetUniformLocation(sceneShader->GetProgram(), "shadowTex"), 2);
-
-	glUniform3fv(glGetUniformLocation(sceneShader->GetProgram(), "cameraPos"), 1, (float*)&camera->GetPosition());
-
+	glUniform1i(glGetUniformLocation(orbShader->GetProgram(), "diffuseTex"), 0);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, buildingTex);
 
+	glUniform1i(glGetUniformLocation(orbShader->GetProgram(), "bumpTex"), 1);
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, buildingBump);
 
+	glUniform1i(glGetUniformLocation(orbShader->GetProgram(), "shadowTex"), 2);
 	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, sphereTex);
+	glBindTexture(GL_TEXTURE_2D, shadowTex);
+
+	glUniform1i(glGetUniformLocation(orbShader->GetProgram(), "thirdTex"), 3);
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, thirdTex);
+
+	glUniform1i(glGetUniformLocation(orbShader->GetProgram(), "fourthTex"), 4);
+	glActiveTexture(GL_TEXTURE4);
+	glBindTexture(GL_TEXTURE_2D, fourthTex);
+
+	glUniform3fv(glGetUniformLocation(orbShader->GetProgram(), "cameraPos"), 1, (float*)&camera->GetPosition());
 
 
-	for (int i = 0; i < 4; ++i) {
+
+	sceneTransforms[0] = Matrix4::Translation(Vector3(2500, 400, 300)) * Matrix4::Rotation(0, Vector3(0, 0, 0)) * Matrix4::Scale(Vector3(300, 150, 300));
+	sceneTransforms[1] = Matrix4::Translation(Vector3(2500, 400+150, 300)) * Matrix4::Rotation(0, Vector3(0, 0, 0)) * Matrix4::Scale(Vector3(150, 50, 150));
+	sceneTransforms[2] = Matrix4::Translation(Vector3(2800, 450, 2700)) * Matrix4::Rotation(180, Vector3(1, 0, 0))* Matrix4::Rotation(70, Vector3(0, 1, 0)) * Matrix4::Scale(Vector3(150, 150, 0));
+
+	for (int i = 0; i < 3; ++i) {
+		if (i == 2) {
+			glUniform1i(glGetUniformLocation(orbShader->GetProgram(), "diffuseTex"), 0);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, vWaveTex);
+
+			glUniform1i(glGetUniformLocation(orbShader->GetProgram(), "bumpTex"), 1);
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, buildingBump);
+
+			glUniform1i(glGetUniformLocation(orbShader->GetProgram(), "shadowTex"), 2);
+			glActiveTexture(GL_TEXTURE2);
+			glBindTexture(GL_TEXTURE_2D, shadowTex);
+
+			glUniform1i(glGetUniformLocation(orbShader->GetProgram(), "thirdTex"), 3);
+			glActiveTexture(GL_TEXTURE3);
+			glBindTexture(GL_TEXTURE_2D, stencilTex);
+
+			glUniform1i(glGetUniformLocation(orbShader->GetProgram(), "fourthTex"), 4);
+			glActiveTexture(GL_TEXTURE4);
+			glBindTexture(GL_TEXTURE_2D, thirdTex);
+
+			glUniform3fv(glGetUniformLocation(orbShader->GetProgram(), "cameraPos"), 1, (float*)&camera->GetPosition());
+		}
+
+
 		modelMatrix = sceneTransforms[i];
 		UpdateShaderMatrices();
 		sceneMeshes[i]->Draw();
+
 	}
+
+
 }
+
+
+void Renderer::DrawStencilObject() {
+
+}
+
 
 void Renderer::OrbShadow() {
 	glBindFramebuffer(GL_FRAMEBUFFER, sphereFBO);
@@ -921,6 +966,7 @@ void Renderer::splitscreen() {
 
 ////tut12
 void Renderer::DrawBuilding() {
+
 	//glCullFace(GL_BACK);
 	BuildNodeLists(root);
 	SortNodeLists();
@@ -948,6 +994,8 @@ void Renderer::DrawBuilding() {
 
 	DrawNodes();
 	ClearNodeLists();
+
+	
 }
 
 
