@@ -56,6 +56,6 @@ _Bump maps used on buildings and heightmap_ <br />
 
 #### Asset references
 
-![Robot](https://assetstore.unity.com/packages/3d/characters/robots/robot-1-65726)
+[Robot](https://assetstore.unity.com/packages/3d/characters/robots/robot-1-65726)
 
-![Skybox](https://www.artstation.com/artwork/9QDkL)
+[Skybox](https://www.artstation.com/artwork/9QDkL)
