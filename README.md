@@ -8,7 +8,7 @@ The main framework was provided by Dr Rich Davison and he has given permission t
 <br /><br />
 
 ### Short Demonstration Video
-![Video Link](https://youtu.be/5CmZtc3gN7A)
+[Video Link](https://youtu.be/5CmZtc3gN7A)
 <br /><br />
 
 ### Screenshots
