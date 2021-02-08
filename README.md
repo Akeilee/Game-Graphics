@@ -1,6 +1,6 @@
 ## 8502 - Game Graphics - 2020/2021
 <br />
-This repo shows rendering techniques using OpenGL for the 8502 coursework at Newcastle University. The coursework was based upon a retrowave/cyberpunk theme.
+This repo shows rendering techniques using C++ and OpenGL for the 8502 coursework at Newcastle University. The coursework was based upon a retrowave/cyberpunk theme.
 <br />
 
 ### Acknowledgements
