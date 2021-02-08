@@ -1,2 +1,4 @@
-C:\Users\Akeina\Desktop\CSC8502\x64\Debug\nclgl.pdb
-C:\Users\Akeina\Desktop\CSC8502\nclgl\x64\Debug\nclgl.pdb
+D:\Akeina\Documents\NEWCASTLE\Uni\MSc\8502 Graphics\Coursework\JLee 8502 CW.A\CSC8502\x64\Debug\nclgl.pdb
+D:\Akeina\Documents\NEWCASTLE\Uni\MSc\8502 Graphics\Coursework\JLee 8502 CW.A\CSC8502\nclgl\x64\Debug\nclgl.pdb
+D:\Akeina\Documents\GitHub\Game-Graphics\x64\Debug\nclgl.pdb
+D:\Akeina\Documents\GitHub\Game-Graphics\nclgl\x64\Debug\nclgl.pdb

@@ -1,16 +1,16 @@
 ﻿  glad.c
   Camera.cpp
-C:\Users\Akeina\Desktop\CSC8502\nclgl\Camera.cpp(27,29): warning C4244: 'argument': conversion from 'double' to 'const float', possible loss of data
-C:\Users\Akeina\Desktop\CSC8502\nclgl\Camera.cpp(31,36): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+D:\Akeina\Documents\GitHub\Game-Graphics\nclgl\Camera.cpp(27,29): warning C4244: 'argument': conversion from 'double' to 'const float', possible loss of data
+D:\Akeina\Documents\GitHub\Game-Graphics\nclgl\Camera.cpp(31,36): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
   ComputeShader.cpp
   CubeRobot.cpp
   Frustum.cpp
   GameTimer.cpp
   HeightMap.cpp
-C:\Users\Akeina\Desktop\CSC8502\nclgl\HeightMap.cpp(26,48): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
-C:\Users\Akeina\Desktop\CSC8502\nclgl\HeightMap.cpp(26,31): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
-C:\Users\Akeina\Desktop\CSC8502\nclgl\HeightMap.cpp(27,39): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
-C:\Users\Akeina\Desktop\CSC8502\nclgl\HeightMap.cpp(27,36): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
+D:\Akeina\Documents\GitHub\Game-Graphics\nclgl\HeightMap.cpp(26,48): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
+D:\Akeina\Documents\GitHub\Game-Graphics\nclgl\HeightMap.cpp(26,31): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
+D:\Akeina\Documents\GitHub\Game-Graphics\nclgl\HeightMap.cpp(27,39): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
+D:\Akeina\Documents\GitHub\Game-Graphics\nclgl\HeightMap.cpp(27,36): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
   Keyboard.cpp
   Light.cpp
   Matrix2.cpp
@@ -29,4 +29,4 @@ C:\Users\Akeina\Desktop\CSC8502\nclgl\HeightMap.cpp(27,36): warning C4244: 'argu
   Compiling...
   Window.cpp
   Generating Code...
-  nclgl.vcxproj -> C:\Users\Akeina\Desktop\CSC8502\x64\Debug\nclgl.lib
+  nclgl.vcxproj -> D:\Akeina\Documents\GitHub\Game-Graphics\x64\Debug\nclgl.lib

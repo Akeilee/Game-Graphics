@@ -1,2 +1,24 @@
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(491,5): warning MSB8028: The intermediate directory (x64\Debug\) contains files shared from another project (Blank Project.vcxproj).  This can lead to incorrect clean and rebuild behavior.
-  BlankProject.vcxproj -> C:\Users\Akeina\Desktop\CSC8502\x64\Debug\JLee_8502_CW.exe
+  BlankProject.cpp
+  Renderer.cpp
+D:\Akeina\Documents\GitHub\Game-Graphics\Blank Project\Renderer.cpp(113,78): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
+D:\Akeina\Documents\GitHub\Game-Graphics\Blank Project\Renderer.cpp(113,62): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
+D:\Akeina\Documents\GitHub\Game-Graphics\Blank Project\Renderer.cpp(124,82): warning C4305: 'argument': truncation from 'double' to 'const float'
+D:\Akeina\Documents\GitHub\Game-Graphics\Blank Project\Renderer.cpp(130,93): warning C4305: 'argument': truncation from 'double' to 'float'
+D:\Akeina\Documents\GitHub\Game-Graphics\Blank Project\Renderer.cpp(136,15): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+D:\Akeina\Documents\GitHub\Game-Graphics\Blank Project\Renderer.cpp(137,15): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+D:\Akeina\Documents\GitHub\Game-Graphics\Blank Project\Renderer.cpp(138,15): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+D:\Akeina\Documents\GitHub\Game-Graphics\Blank Project\Renderer.cpp(145,29): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\Akeina\Documents\GitHub\Game-Graphics\Blank Project\Renderer.cpp(249,15): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\Akeina\Documents\GitHub\Game-Graphics\Blank Project\Renderer.cpp(250,15): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\Akeina\Documents\GitHub\Game-Graphics\Blank Project\Renderer.cpp(251,15): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\Akeina\Documents\GitHub\Game-Graphics\Blank Project\Renderer.cpp(256,48): warning C4305: 'argument': truncation from 'double' to 'float'
+D:\Akeina\Documents\GitHub\Game-Graphics\Blank Project\Renderer.cpp(352,56): warning C4244: 'argument': conversion from 'double' to 'const float', possible loss of data
+D:\Akeina\Documents\GitHub\Game-Graphics\Blank Project\Renderer.cpp(466,143): warning C4244: 'argument': conversion from 'double' to 'const float', possible loss of data
+D:\Akeina\Documents\GitHub\Game-Graphics\Blank Project\Renderer.cpp(466,87): warning C4244: 'argument': conversion from 'double' to 'const float', possible loss of data
+D:\Akeina\Documents\GitHub\Game-Graphics\Blank Project\Renderer.cpp(569,104): warning C4305: 'argument': truncation from 'double' to 'const float'
+D:\Akeina\Documents\GitHub\Game-Graphics\Blank Project\Renderer.cpp(581,88): warning C4305: 'argument': truncation from 'double' to 'const float'
+D:\Akeina\Documents\GitHub\Game-Graphics\Blank Project\Renderer.cpp(584,88): warning C4305: 'argument': truncation from 'double' to 'const float'
+D:\Akeina\Documents\GitHub\Game-Graphics\Blank Project\Renderer.cpp(608,81): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+  Generating Code...
+  BlankProject.vcxproj -> D:\Akeina\Documents\GitHub\Game-Graphics\x64\Debug\JLee_8502_CW.exe
